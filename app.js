@@ -3,7 +3,7 @@ const app = express();
 const server = require("http").createServer(express);
 const io = require("socket.io")(server);
 const mongoose = require("mongoose");
-require('dotenv').config;
+require('dotenv').config();
 
 var createError = require('http-errors');
 var path = require('path');
