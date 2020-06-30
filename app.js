@@ -19,8 +19,8 @@ db.once('open', () => {
     console.log("Database connected!!");
 })
 
-const gamePORT = 4000;
-const webPORT = 3000;
+const gamePORT = process.env.GAME_PORT;
+const webPORT = process.env.WEB_PORT;
 
 server.listen(gamePORT, () => {
     console.log(`game socket listening at http://localhost:${gamePORT}`);
