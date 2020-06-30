@@ -5,7 +5,7 @@ const io = require("socket.io")(server);
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-const uri = "mongodb+srv://Admin:javer1217@cluster0.siyfo.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb+srv://node-server:node1234@cluster0.siyfo.gcp.mongodb.net/test?retryWrites=true&w=majority";
 
 //mongoose.connect("mongodb://localhost:27017/test", {
 mongoose.connect(uri, {
