@@ -28,9 +28,9 @@ module.exports = (socket, next) => {
                 socket.emit("SignIn", { data: null });
             }
             else {
-                bcrypt.compare(passwd, result.passwd, (err, isMatch) => {
+                bcrypt.compare(data.passwd, result.passwd, (err, isMatch) => {
                     if(err) console.log(err);
-                    
+
                     else if(isMatch) {
                         console.log("success!");
                         socket.emit("SignIn", { data: result.nick });
