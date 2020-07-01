@@ -5,11 +5,13 @@ const playerAuthSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true,
+        unique: true,
     },
     nick: {
         type: String,
         trim: true,
         required: true,
+        unique: true,
     },
     passwd: {
         type: String,

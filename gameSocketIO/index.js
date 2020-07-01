@@ -50,12 +50,13 @@ module.exports = (socket, next) => {
                 else {
                     const { id,  nick, passwd } = data;
 
-                    playerAuthModel.create({ id, nick, passwd }, (err, result) => {
+                    const newPlayer = playerAuthModel({ id, nick, passwd });
+                    newPlayer.save((err, player) => {
                         if(err) console.log("register err");
                         else {
-                            console.log("seccess: " + result);
+                            console.log("seccess: " + player);
                             socket.emit("Register", { data: "success" });
-                            playerStatsModel.create({ "_id": result._id, "nick": nick });
+                            playerStatsModel.create({ "_id": player._id, "nick": nick });
                         }
                     });
                 }
