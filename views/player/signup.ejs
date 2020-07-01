@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../header"); %>
+<body>
+
+  <!-- Start your project here-->  
+  <%- include("../menu") %>
+
+  <!-- 등록 시작 -->
+
+  
+<!-- Material form register -->
+<div class="card">
+
+    <h5 class="card-header info-color white-text text-center py-4">
+        <strong>Sign up</strong>
+    </h5>
+
+    <!--Card content-->
+    <div class="card-body px-lg-5 pt-0">
+
+        <!-- Form -->
+        <form class="text-center" style="color: #757575;" action="#!" id="signupForm">
+            <!-- id -->
+            <div class="md-form">
+                <input type="text" id="id" class="form-control" required>
+                <label for="id">Id</label>
+                <small id="formIdHelpBlock" class="form-text text-muted mb-4" align="left" color="#ff0000">
+                    
+                </small>
+            </div>
+
+            <!-- Nickname -->
+            <div class="md-form mt-0">
+                <input type="text" id="nick" class="form-control" required>
+                <label for="nick">Nickname</label>
+                <small id="formNickHelpBlock" class="form-text text-muted mb-4" align="left" color="#ff0000">
+                    
+                </small>
+            </div>
+
+            <!-- Password -->
+            <div class="md-form">
+                <input type="password" id="password" class="form-control" aria-describedby="password" required>
+                <label for="password">Password</label>
+            </div>
+            <!-- Password Confirmation-->
+            <div class="md-form">
+                <input type="password" id="confirm-password" class="form-control" aria-describedby="password" id="aaa" required>
+                <label for="confirm-password" >Confirm Password</label>
+            </div>
+
+            <!-- Sign up button -->
+            <button class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit" id="signup-btn">Sign up</button>
+
+        </form>
+        <!-- Form -->
+
+    </div>
+
+</div>
+<!-- Material form register -->
+
+  <!-- 등록 끝 -->
+
+  <!-- End your project here-->
+
+  <%- include("../footer") %>
+
+  <script>
+      $(function() {
+          $("#signupForm").submit((event) => {
+              event.preventDefault();
+              //등록
+              const id = $("#id").val();
+              const nick = $("#nick").val();
+              const passwd = $("#password").val();
+
+              $.ajax({
+                  url:"/api/player/signup",
+                  type: "POST", //post
+                  data: { id, nick, passwd }
+              })
+              .done(() => {
+                  location.href = "/api/player/login";
+              })
+              .fail((request, status, error) => {
+                  alert(request.responseText);
+              });
+          });
+
+          $("#confirm-password").keyup(() => {
+              $("#signup-btn").prop("disabled", $("#password").val() != $("#confirm-password").val());
+          })
+
+          $("#id").focusout((event) => {
+              event.preventDefault();
+              const id = $("#id").val();
+              $.ajax({
+                  url: "/api/player/check-id",
+                  type: "POST",
+                  data: { id }
+              })
+              .done((isAvailable) => {
+                  if(!isAvailable) {
+                      $("#formIdHelpBlock").text("Id Not Available");
+                  } else {
+                    $("#formIdHelpBlock").text("");
+                  }
+              })
+          })
+          $("#nick").focusout((event) => {
+              event.preventDefault();
+              const nick = $("#nick").val();
+              $.ajax({
+                  url: "/api/player/check-nick",
+                  type: "POST",
+                  data: { nick }
+              })
+              .done((isAvailable) => {
+                  if(!isAvailable) {
+                      $("#formNickHelpBlock").text("Nickname Not Available");
+                  }else {
+                    $("#formNickHelpBlock").text("");
+                  }
+              })
+          })
+      });
+  </script>
+
+</body>
+</html>

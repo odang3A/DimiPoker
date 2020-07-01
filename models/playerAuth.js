@@ -17,6 +17,9 @@ const playerAuthSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    token: {
+        type: String,
+    },
     created: {
         type: Date,
         default: Date.now,
