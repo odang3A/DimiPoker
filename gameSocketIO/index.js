@@ -3,6 +3,7 @@ const playerAuthModel = require("../models/playerAuth");
 const playerStatsModel = require("../models/playerStats");
 const gameLogModel = require("../models/gameLog");
 const roundLogModel = require("../models/roundLog");
+const bcrypt = require("bcrypt");
 
 module.exports = (socket, next) => {
 
@@ -27,30 +28,36 @@ module.exports = (socket, next) => {
                 socket.emit("SignIn", { data: null });
             }
             else {
-                if(data.passwd == result.passwd) {
-                    console.log("success!");
-                    socket.emit("SignIn", { data: result.nick });
-                }
-                else {
-                    console.log("wrong passwd");
-                    socket.emit("SignIn", { data: null });
-                }
+                bcrypt.compare(passwd, result.passwd, (err, isMatch) => {
+                    if(err) console.log(err);
+                    
+                    else if(isMatch) {
+                        console.log("success!");
+                        socket.emit("SignIn", { data: result.nick });
+                    }
+                    else {
+                        console.log("wrong passwd");
+                        socket.emit("SignIn", { data: null });
+                    }
+                });
             }
-
         });
     });
 
     socket.on("Register", (data) => {
         console.log(`[Register] ${data.id} : ${data.nick} : ${data.passwd}`);
 
-        playerAuthModel.findOne({$or: [{id: data.id},{nick: data.nick}]},
-            (err, result) => {
-                if(err) console.log("register err");
-                else if(result) console.log("id/nickname already exists");
-                else {
-                    const { id,  nick, passwd } = data;
+        playerAuthModel.findOne({$or: [{id: data.id},{nick: data.nick}]}, (err, result) => {
+            if(err) console.log("register err");
+            else if(result) console.log("id/nickname already exists");
+            else {
+                const { id,  nick, passwd } = data;
+                const saltRounds = 10;
 
-                    const newPlayer = playerAuthModel({ id, nick, passwd });
+                bcrypt.hash(passwd, saltRounds, (err, hash) => {
+                    if(err) console.log(err);
+
+                    const newPlayer = playerAuthModel({ id, nick, passwd: hash });
                     newPlayer.save((err, player) => {
                         if(err) console.log("register err");
                         else {
@@ -59,9 +66,9 @@ module.exports = (socket, next) => {
                             playerStatsModel.create({ "_id": player._id, "nick": nick });
                         }
                     });
-                }
+                });
             }
-        );
+        });
     });
     // playerAuth
 
