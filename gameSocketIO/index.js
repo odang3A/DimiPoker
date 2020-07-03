@@ -93,7 +93,7 @@ module.exports = (socket, next) => {
                 switch(update) {
                     case "gamePlayCnt":
                         result.gamePlayCnt++;
-                        result,exp += 1;
+                        result.exp += 1;
                         break;
                     case "gameWinCnt":
                         result.gameWinCnt++;
