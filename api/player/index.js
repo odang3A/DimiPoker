@@ -3,11 +3,13 @@ const router = Router();
 const ctrl = require("./player.ctrl");
 
 router.get("/signup", ctrl.showSignupPage);
+router.get("/check-id/:id", ctrl.checkId);
+router.get("/check-nick/:nick", ctrl.checkNick);
 router.get("/login", ctrl.showLoginPage);
+router.get("/logout", ctrl.logout);
+router.get("/:nick", ctrl.showStats);
 
 router.post("/signup", ctrl.signup);
-router.post("/check-id", ctrl.checkId);
-router.post("/check-nick", ctrl.checkNick);
 router.post("/login", ctrl.login);
 
 module.exports = router;

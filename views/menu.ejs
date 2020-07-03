@@ -1,45 +1,67 @@
 <!--Navbar -->
-<nav class="mb-1 navbar navbar-expand-lg navbar-dark default-color">
-    <a class="navbar-brand" href="/">Dimi Poker</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-333"
-      aria-controls="navbarSupportedContent-333" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent-333">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/">Home
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">Dropdown
-          </a>
-          <div class="dropdown-menu dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li>
-      </ul>
-      <ul class="navbar-nav ml-auto nav-flex-icons">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-user"></i> Profile </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
-              <a class="dropdown-item" href="/api/player/login">Log In</a>
-              <a class="dropdown-item" href="/api/player/signup">Sign Up</a>
-            </div>
-          </li>
-      </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Dimi Poker</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-333"
+  aria-controls="navbarSupportedContent-333" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent-333">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+      <a class="nav-link" href="/">Home
+      <span class="sr-only">(current)</span>
+      </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Features</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Pricing</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+
+      <% if(player === null) { %>
+      <i class="fas fa-user"></i> Profile </a>
+      <div class="dropdown-menu dropdown-menu dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
+        <a class="dropdown-item" href="/api/player/login">Login</a>
+        <a class="dropdown-item" href="/api/player/signup">Sign Up</a>
+      <% } else { %>
+      <i class="fas fa-user"></i> <%= player.nick %> </a>
+      <div class="dropdown-menu dropdown-menu-right dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
+        <a class="dropdown-item" href="/api/player/<%= player.nick %>">My Stats</a>
+        <a class="dropdown-item" href="/api/account/profile">Account Settings</a>
+        <a class="dropdown-item" href="/api/player/logout">Logout</a>
+      <% } %>
+      </div>
+      </li>
+    </ul>
+
+    <div class="form-inline">
+      <form class="input-group" id="searchPlayerNav">
+          <input class="form-control py-0" type="text" placeholder="Search for players" aria-label="Search" id="nickNav" required>
+          <button class="input-group-text lighten-3 bg-white" type="submit">
+            <i class="fas fa-search" aria-hidden="true" type="submit"></i>
+          </button>
+      </form>
     </div>
-  </nav>
-  <!--/.Navbar -->
+
+  </div>
+
+</nav>
+<!--/.Navbar -->
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+  $(function() {
+    $("#searchPlayerNav").submit((event) => {
+      event.preventDefault();
+      const nick = $("#nickNav").val();
+
+      location.href = "/api/player/" + nick;
+    })
+  })
+</script>
+

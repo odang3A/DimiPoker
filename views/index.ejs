@@ -6,8 +6,8 @@
   <!-- Start your project here-->  
   <%- include("menu") %>
 
-    <!-- Jumbotron -->
-<div class="jumbotron text-center">
+  <!-- Jumbotron -->
+  <div class="jumbotron text-center" style="max-width: 1500px; margin:auto;">
 
     <!-- Title -->
     <h2 class="card-title h1">Dimi Poker</h2>
@@ -27,16 +27,20 @@
   
     </div>
     <!-- Grid row -->
-  
+    <!-- Search form -->
+    <%- include("search"); %>
+    
     <hr class="my-4">
   
     <div class="pt-2">
       <button type="button" class="btn btn-blue waves-effect">Buy now <span class="far fa-gem ml-1"></span></button>
       <button type="button" class="btn btn-outline-primary waves-effect">Download <i class="fas fa-download ml-1"></i></button>
+    
     </div>
   
   </div>
   <!-- Jumbotron -->
+
   <!-- End your project here-->
 
   <%- include("footer") %>

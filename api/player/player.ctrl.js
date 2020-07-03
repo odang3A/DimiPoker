@@ -1,9 +1,10 @@
 const express = require("express");
-const playerAuthModel = require("../../models/playerAuth");
-const playerStatsModel = require("../../models/playerStats");
+const playerAuthModel = require("../../models/player/playerAuth");
+const playerStatsModel = require("../../models/player/playerStats");
+const playerChipLogModel = require("../../models/player/playerChipLog");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const playerAuth = require("../../models/playerAuth");
+const { NotExtended } = require("http-errors");
 
 const showSignupPage = (req, res) => {
     res.render("player/signup");
@@ -40,7 +41,8 @@ const signup = (req, res) => {
 }
 
 const checkId = (req, res) => {
-    const { id } = req.body;
+    const id = req.params.id;
+    console.log(id);
     playerAuthModel.findOne({ id }, (err, result) => {
         if(err) return res.status(500).send("check-id err");
         if(result) res.send(false);
@@ -48,7 +50,7 @@ const checkId = (req, res) => {
     });
 }
 const checkNick = (req, res) => {
-    const { nick } = req.body;
+    const nick = req.params.nick;
     playerAuthModel.findOne({ nick }, (err, result) => {
         if(err) return res.status(500).send("check-nick err");
         if(result) res.send(false);
@@ -80,4 +82,63 @@ const login = (req, res) => {
     });
 }
 
-module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login };
+const checkAuth = (req, res, next) => {
+    res.locals.player = null;
+
+    const token = req.cookies.token;
+
+    if(!token) {
+        if(req.url !== "/api/account/profile") {
+            return next();
+        } else {
+            return res.render("user/login");
+        }
+    }
+
+    jwt.verify(token, "1234", (err, _id) => {
+        if(err) {
+            res.clearCookie("token");
+            return res.render("player/login");
+        }
+        playerAuthModel.findOne({ _id, token }, (err, player) => {
+            if(err) return res.status(500).send("인증 시 오류가 발생했습니다.");
+            if(!player) return res.render("player/login");
+            res.locals.player = { nick: player.nick };
+            next();
+        })
+    })
+}
+
+const logout = (req, res) => {
+    const token = req.cookies.token;
+
+    jwt.verify(token, "1234", (err, _id) => {
+        if(err) return res.status(500).send("로그아웃 시 오류가 발생했습니다");
+        playerAuthModel.findByIdAndUpdate(_id, { token: "" }, (err, result) => {
+            if(err) return res.status(500).send("로그아웃 시 오류가 발생했습니다.");
+            res.clearCookie("token");
+            res.redirect("/");
+        })
+    })
+}
+
+const showStats = (req, res) => {
+    const nick = req.params.nick;
+
+    if(!nick) return res.status(400).send("입력값이 없습니다.")
+    playerStatsModel.findOne({ nick }, (err, result) => {
+        if(err) return res.status(500).send("사용자 조회 오류");
+        //if(!result) return res.status(404).send("일치하는 플레이어가 없습니다.");
+
+        playerChipLogModel.find({ nick }, (err, chipLog) => {
+            if(err) return res.status(500).send("칩 로그 오류");
+            result.chipLog = chipLog;
+            res.render("player/stats", { result });
+        })
+    })
+    
+}
+
+
+
+module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats };

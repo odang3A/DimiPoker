@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("../header"); %>
+    <body>
+
+    <%- include("../menu"); %>
+    <!-- Start your project here-->  
+
+    <div class="card" style="max-width: 1500px; margin: auto; display: block;">
+        <% if(result) { %>
+        <div class="media" style="padding: 20px">
+            <img class="d-flex mr-3" src="https://mdbootstrap.com/img/Photos/Others/placeholder1.jpg" alt="Generic placeholder image">
+            <div class="media-body">
+                <h5 class="mt-0 font-weight-bold"><%= result.nick %></h5>
+                
+                    Level <strong> <%= result.level %> </strong> - 
+                    Chips <strong> <%= result.tokens %> </strong> - 
+                    W/L <strong><%= result.gameWLRatio %> </strong>
+                
+            </div>
+        </div>
+
+        <div class="card text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#">Active</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Special title treatment</h5>
+              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+              <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+          </div>
+        <% } else { %>
+            <div style="padding: 20px;">
+                <h1>no results</h1>
+            </div>
+            <%- include("../search"); %>
+        <% } %>
+
+        
+    </div>
+
+    <!-- End your project here-->
+
+    <%- include("../footer") %>
+
+
+    </body>
+</html>

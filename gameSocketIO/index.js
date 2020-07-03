@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
-const playerAuthModel = require("../models/playerAuth");
-const playerStatsModel = require("../models/playerStats");
-const gameLogModel = require("../models/gameLog");
-const roundLogModel = require("../models/roundLog");
+const playerAuthModel = require("../models/player/playerAuth");
+const playerStatsModel = require("../models/player/playerStats");
+const playerChipLogModel = require("../models/player/playerChipLog");
+const gameLogModel = require("../models/game/gameLog");
+const roundLogModel = require("../models/game/roundLog");
 const bcrypt = require("bcrypt");
 
 module.exports = (socket, next) => {
@@ -22,14 +23,14 @@ module.exports = (socket, next) => {
         console.log(`[SignIn] ${data.id} : ${data.passwd}`);
 
         playerAuthModel.findOne({ id: data.id }, (err, result) => {
-            if(err) console.log("signIn err");
+            if(err) return console.log("signIn err");
             else if(!result) {
                 console.log("no such id");
                 socket.emit("SignIn", { data: null });
             }
             else {
                 bcrypt.compare(data.passwd, result.passwd, (err, isMatch) => {
-                    if(err) console.log(err);
+                    if(err) return console.log(err);
 
                     else if(isMatch) {
                         console.log("success!");
@@ -48,18 +49,18 @@ module.exports = (socket, next) => {
         console.log(`[Register] ${data.id} : ${data.nick} : ${data.passwd}`);
 
         playerAuthModel.findOne({$or: [{id: data.id},{nick: data.nick}]}, (err, result) => {
-            if(err) console.log("register err");
+            if(err) return console.log("register err");
             else if(result) console.log("id/nickname already exists");
             else {
                 const { id,  nick, passwd } = data;
                 const saltRounds = 10;
 
                 bcrypt.hash(passwd, saltRounds, (err, hash) => {
-                    if(err) console.log(err);
+                    if(err) return console.log(err);
 
                     const newPlayer = playerAuthModel({ id, nick, passwd: hash });
                     newPlayer.save((err, player) => {
-                        if(err) console.log("register err");
+                        if(err) return console.log("register err");
                         else {
                             console.log("seccess: " + player);
                             socket.emit("Register", { data: "success" });
@@ -76,7 +77,7 @@ module.exports = (socket, next) => {
     socket.on("GetPlayerStats", (data) => {
         //console.log(`[Stats] ${data.nick}`);
         playerStatsModel.findOne({ nick: data.nick }, (err, result) => {
-            if(err) console.log(err);
+            if(err) return console.log(err);
             //console.log(`result: ${result}`);
             socket.emit("GetPlayerStats", result);
         });
@@ -88,41 +89,49 @@ module.exports = (socket, next) => {
         const { nick, update } = data;
         playerStatsModel.findOne({ "nick": nick },
             (err, result) => {
-                if(err) console.log(`err: ${err}`);
+                if(err) return console.log(`err: ${err}`);
                 switch(update) {
                     case "gamePlayCnt":
                         result.gamePlayCnt++;
+                        result,exp += 1;
                         break;
                     case "gameWinCnt":
                         result.gameWinCnt++;
+                        result.exp += 3;
                         break;
                     case "roundPlayCnt":
                         result.roundPlayCnt++;
+                        result.exp += 1;
                         break;
                     case "roundWinCnt": 
                         result.roundWinCnt++;
+                        result.exp += 2;
                         break;
                     default:
                         if(!Number.isNaN(update)){
                             result.tokens += Number(update);
                             if(Number(update) > 0){
                                 result.roundWinCnt++;
+                                result.exp += 2;
                             }
+                            const newChipLog = new playerChipLogModel({ nick, chips: result.tokens });
+                            newChipLog.save((err, chipLog) => {
+                                if(err) return console.log("new ChipLog err");
+                            })
                         }
                         break;
                 }
-                result.gameWLRatio = result.gameWinCnt
-                    / (result.gamePlayCnt == result.gameWinCnt
-                        ? 1 : (result.gamePlayCnt - result.gameWinCnt));
-                result.roundWLRatio = result.roundWinCnt
-                    / (result.roundPlayCnt == result.roundWinCnt
-                        ? 1: (result.roundPlayCnt - result.roundWinCnt));
+                for(i=10, result.level=1;result.exp-i>=0;i+=(i+5)){
+                    result.level++;
+                }
+                result.gameWinrate = (result.gameWinCnt * 100 / result.gamePlayCnt).toFixed(2);
+                result.roundWinrate = (result.roundWinCnt * 100 / result.roundPlayCnt).toFixed(2);
                 playerStatsModel.findOneAndUpdate(
                     { "nick": nick },
                     result,
                     { new: true },
                     (err, r) => {
-                        if(err) console.log("stats err: " + err);
+                        if(err) return console.log("stats err: " + err);
                         //console.log(`stats ${r}`);
                     }
                 );
@@ -137,7 +146,7 @@ module.exports = (socket, next) => {
             { $set: { "playTime": playTime },},
             { new: true },
             (err, result) => {
-                if(err) console.log("updatePlayTime err");
+                if(err) return console.log("updatePlayTime err");
                 // console.log(result);
                 socket.emit("updateCurrPlayerInfo", result);
             });
@@ -146,7 +155,7 @@ module.exports = (socket, next) => {
     // gameLog
     socket.on("gameStartLog", (data) => {
         gameLogModel.create(data, (err, result) => {
-            if(err) console.log(err);
+            if(err) return console.log(err);
             socket.emit("gameStartLog", result);
         });
     });
@@ -158,7 +167,7 @@ module.exports = (socket, next) => {
             {$set: {"gameWinner": gameWinner}, },
             {new: true}, 
             (err, result) => {
-                if(err) console.log(err);
+                if(err) return console.log(err);
                 //console.log(`[gameLog] ${result}`);
             }
         );
@@ -168,7 +177,7 @@ module.exports = (socket, next) => {
     // roundLog
     socket.on("roundStartLog", (data) => {
         roundLogModel.create(data, (err, result) => {
-            if(err) console.log(err);
+            if(err) return console.log(err);
             //게임 총 라운드 수 업데이트
             gameLogModel.findByIdAndUpdate(
                 result.gameId,
@@ -193,7 +202,7 @@ module.exports = (socket, next) => {
             },},
             {new: true},
             (err, result) => {
-                if(err) console.log(err);
+                if(err) return console.log(err);
                 //console.log(`[roundLog] ${result}`);
             }
         );

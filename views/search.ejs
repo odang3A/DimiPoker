@@ -1,0 +1,33 @@
+<!-- <div style="display: block; max-width:600px; margin: auto;">
+  <div class="form-inline justify-content-center" >
+    <form class="input-group form-control-sm mr-3 w-75" id="searchPlayer">
+      <input class="form-control py-0" type="text" placeholder="Search for players"
+        aria-label="Search for players" id="nick" required>
+        <button class="input-group-text lighten-3 bg-white" type="submit">
+          <i class="fas fa-search" aria-hidden="true" type="submit"></i>
+        </button>
+      </form>
+  </div>
+</div> -->
+
+<div class="justify-content-center" style="max-width: 600px; margin: auto; padding: 10px;">
+  <form class="input-group" id="searchPlayer">
+      <input class="form-control py-0" type="text" placeholder="Search for players" aria-label="Search" id="nick" required>
+      <button class="input-group-text lighten-3 bg-white" type="submit">
+        <i class="fas fa-search" aria-hidden="true" type="submit"></i>
+      </button>
+  </form>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+$(function() {
+    $("#searchPlayer").submit((event) => {
+    event.preventDefault();
+    const nick = $("#nick").val();
+
+    location.href = "/api/player/" + nick;
+    })
+})
+</script>

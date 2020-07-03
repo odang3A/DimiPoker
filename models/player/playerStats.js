@@ -6,6 +6,14 @@ const playerStatsSchema = new mongoose.Schema({
         trim: true,
         required: true,
     },
+    level: {
+        type: Number,
+        default: 1,
+    },
+    exp: {
+        type: Number,
+        default: 0,
+    },
     playTime: {
         type: String,
         default: 0,
@@ -22,7 +30,10 @@ const playerStatsSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    gameWLRatio: Number,
+    gameWinrate: {
+        type: Number,
+        default: 0,
+    },
     roundPlayCnt: {
         type: Number,
         default: 0,
@@ -31,7 +42,10 @@ const playerStatsSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    roundWLRatio: Number,
+    roundWinrate: {
+        type: Number,
+        default: 0,
+    }
 })
 
 const playerStats = mongoose.model("playerStats", playerStatsSchema, "playerStats");

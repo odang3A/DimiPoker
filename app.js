@@ -3,6 +3,7 @@ const app = express();
 const server = require("http").createServer(express);
 const io = require("socket.io")(server);
 const mongoose = require("mongoose");
+const playerCtrl = require("./api/player/player.ctrl");
 require('dotenv').config();
 
 var createError = require('http-errors');
@@ -46,6 +47,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use("/", playerCtrl.checkAuth);
 
 app.get("/", (req, res) => {
     res.render("index");

@@ -11,7 +11,7 @@
 
   
 <!-- Material form register -->
-<div class="card">
+<div class="card" style="max-width: 1500px; margin: auto; display: block;">
 
     <h5 class="card-header info-color white-text text-center py-4">
         <strong>Sign up</strong>
@@ -26,7 +26,7 @@
             <div class="md-form">
                 <input type="text" id="id" class="form-control" required>
                 <label for="id">Id</label>
-                <small id="formIdHelpBlock" class="form-text text-muted mb-4" align="left" color="#ff0000">
+                <small id="formIdHelpBlock" class="form-text text-muted mb-4" style ="text-align: left;">
                     
                 </small>
             </div>
@@ -35,7 +35,7 @@
             <div class="md-form mt-0">
                 <input type="text" id="nick" class="form-control" required>
                 <label for="nick">Nickname</label>
-                <small id="formNickHelpBlock" class="form-text text-muted mb-4" align="left" color="#ff0000">
+                <small id="formNickHelpBlock" class="form-text text-muted mb-4" style="text-align: left;">
                     
                 </small>
             </div>
@@ -49,6 +49,9 @@
             <div class="md-form">
                 <input type="password" id="confirm-password" class="form-control" aria-describedby="password" id="aaa" required>
                 <label for="confirm-password" >Confirm Password</label>
+                <small id="formPasswordHelpBlock" class="form-text text-muted mb-4" style="text-align: left;">
+                    
+                </small>
             </div>
 
             <!-- Sign up button -->
@@ -91,40 +94,42 @@
           });
 
           $("#confirm-password").keyup(() => {
-              $("#signup-btn").prop("disabled", $("#password").val() != $("#confirm-password").val());
+              const isConfirmed = $("#password").val() === $("#confirm-password").val()
+              $("#signup-btn").prop("disabled", !isConfirmed);
+              $("#formPasswordHelpBlock").text(isConfirmed ? "" : "Must match Passowrd");
           })
 
           $("#id").focusout((event) => {
               event.preventDefault();
               const id = $("#id").val();
-              $.ajax({
-                  url: "/api/player/check-id",
-                  type: "POST",
-                  data: { id }
-              })
-              .done((isAvailable) => {
-                  if(!isAvailable) {
-                      $("#formIdHelpBlock").text("Id Not Available");
-                  } else {
-                    $("#formIdHelpBlock").text("");
-                  }
-              })
+              if(id){
+                $.ajax({
+                    url: "/api/player/check-id/" + id,
+                    type: "get"
+                })
+                .done((isAvailable) => {
+                    $("#formIdHelpBlock").text(isAvailable ? "" : "Id not Available");
+                })
+                .fail((request, status, error) => {
+                    alert(request.responseText);
+                })
+            }
           })
           $("#nick").focusout((event) => {
               event.preventDefault();
               const nick = $("#nick").val();
-              $.ajax({
-                  url: "/api/player/check-nick",
-                  type: "POST",
-                  data: { nick }
-              })
-              .done((isAvailable) => {
-                  if(!isAvailable) {
-                      $("#formNickHelpBlock").text("Nickname Not Available");
-                  }else {
-                    $("#formNickHelpBlock").text("");
-                  }
-              })
+              if(nick){
+                $.ajax({
+                    url: "/api/player/check-nick/" + nick,
+                    type: "get"
+                })
+                .done((isAvailable) => {
+                    $("#formNickHelpBlock").text(isAvailable ? "" : "Id not Available");
+                })
+                .fail((request, status, error) => {
+                    alert(request.responseText);
+                })
+            }
           })
       });
   </script>
