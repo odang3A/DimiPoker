@@ -168,12 +168,14 @@ module.exports = (socket, next) => {
 
             for(i=0;i<=8;i++){
                 if(gameLog[`p${i}`]){
+                    console.log(gameLog[`p${i}`]);
                     playerStatsModel.findOneAndUpdate(
                         { nick: gameLog[`p${i}`] },
                         { $push: { playedGamesLog: gameLog._id } },
                         { new: true },
                         (err, result) => {
                             if(err) return console.log("전적 게임로그 업데이트 오류");
+                            console.log(result);
                         })
                 } else break;
             }
