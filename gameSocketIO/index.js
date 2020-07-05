@@ -165,6 +165,7 @@ module.exports = (socket, next) => {
         gameLogModel.create(data, (err, gameLog) => {
             if(err) return console.log(err);
             socket.emit("gameStartLog", gameLog);
+            console.log(gameLog[`p${i}`]);
 
             for(i=0;i<=8;i++){
                 if(gameLog[`p${i}`]){
