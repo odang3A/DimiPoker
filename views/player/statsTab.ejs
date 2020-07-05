@@ -1,0 +1,135 @@
+<!-- <div class="container"> -->
+    <div class="row">
+        <!--stats-->
+        <div class="col-md mb-3">
+            <div class="card">
+                <h5 class="card-header h5">Overall</h5>
+                <div class="col-md">
+                    <div class="row row-cols-2">
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Chips
+                                <h5 class=" font-weight-bold"><%= result.tokens %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Winrate
+                                <h5 class=" font-weight-bold"><%= result.gameWinrate %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Earns per Game
+                                <h5 class=" font-weight-bold">
+                                    <%= ((result.tokens-1000)/(result.gamePlayCnt==0?1:result.gamePlayCnt)).toFixed(2) %>
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Earned
+                                <h5 class=" font-weight-bold"><%= result.tokensEarned %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Wins
+                                <h5 class=" font-weight-bold"><%= result.gameWinCnt %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Games Played
+                                <h5 class=" font-weight-bold"><%= result.gamePlayCnt %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Lost
+                                <h5 class=" font-weight-bold"><%= result.tokensEarned - result.tokens + 1000 %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Losses
+                                <h5 class=" font-weight-bold"><%= result.gamePlayCnt - result.gameWinCnt %></h5>
+                            </div>
+                        </div>
+                        <div class="media col-md-4">
+                            <div class="media-body mt-2">
+                                Playtime
+                                <h5 class=" font-weight-bold"><%= result.playTime %></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/stats-->
+        <!--games breakdown-->
+        <div class="col-md-5 mb-3">
+            <div class="card">
+                <h5 class="card-header h5">Round Stats</h5>
+                <div class="col-md">
+                    <div class="row row-cols-2">
+                        <div class="media col-md">
+                            <div class="media-body mt-2">
+                                Rounds Played
+                                <h5 class=" font-weight-bold"><%= result.roundPlayCnt %></h5>
+                            </div>
+                        </div>
+                        <div class="media col">
+                            <div class="media-body mt-2">
+                                Round Winrate
+                                <h5 class=" font-weight-bold"><%= result.roundWinrate %></h5>
+                            </div>
+                        </div>
+                        <div class="media col">
+                            <div class="media-body mt-2">
+                                Rounds per Game
+                                <h5 class=" font-weight-bold">
+                                    <%= ((result.roundPlayCnt)/(result.gamePlayCnt==0?1:result.gamePlayCnt)).toFixed(2) %>
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="media col">
+                            <div class="media-body mt-2">
+                                Round Wins
+                                <h5 class=" font-weight-bold"><%= result.roundWinCnt %></h5>
+                            </div>
+                        </div>
+                        <div class="media col">
+                            <div class="media-body mt-2">
+                                Earns per Round
+                                <h5 class=" font-weight-bold">
+                                    <%= ((result.tokens-1000)/(result.roundPlayCnt==0?1:result.roundPlayCnt)).toFixed(2) %>
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="media col">
+                            <div class="media-body mt-2">
+                                Round Losses
+                                <h5 class=" font-weight-bold"><%= result.roundPlayCnt - result.roundWinCnt %></h5>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/games breakdown-->
+
+    </div>
+    <div class="row">
+        <div class="col mb-3">
+            <div class="card">
+                <h5 class="card-header h5">Chips</h5>
+                <div>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<!-- </div> -->

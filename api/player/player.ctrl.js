@@ -2,9 +2,9 @@ const express = require("express");
 const playerAuthModel = require("../../models/player/playerAuth");
 const playerStatsModel = require("../../models/player/playerStats");
 const playerChipLogModel = require("../../models/player/playerChipLog");
+const gameLogModel = require("../../models/game/gameLog");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { NotExtended } = require("http-errors");
 
 const showSignupPage = (req, res) => {
     res.render("player/signup");
@@ -33,7 +33,11 @@ const signup = (req, res) => {
                 newStats.save((err, pStats) => {
                     if(err) return res.status(500).send("전적 생성 오류 발생");
 
-                    res.status(201).send(pAuth);
+                    playerChipLogModel.create({ nick, chips: 1000 }, (err, cLog) => {
+                        if(err) return res.status(500).send("칩 로그 생성 오류 발생");
+
+                        res.status(201).send(pAuth);
+                    });
                 })
             })
         })
@@ -102,7 +106,10 @@ const checkAuth = (req, res, next) => {
         }
         playerAuthModel.findOne({ _id, token }, (err, player) => {
             if(err) return res.status(500).send("인증 시 오류가 발생했습니다.");
-            if(!player) return res.render("player/login");
+            if(!player) {
+                res.clearCookie("token");
+                return res.render("player/login");
+            }
             res.locals.player = { nick: player.nick };
             next();
         })
@@ -126,19 +133,55 @@ const showStats = (req, res) => {
     const nick = req.params.nick;
 
     if(!nick) return res.status(400).send("입력값이 없습니다.")
-    playerStatsModel.findOne({ nick }, (err, result) => {
+    playerStatsModel.findOne({ nick }, (err, stats) => {
         if(err) return res.status(500).send("사용자 조회 오류");
         //if(!result) return res.status(404).send("일치하는 플레이어가 없습니다.");
-
-        playerChipLogModel.find({ nick }, (err, chipLog) => {
-            if(err) return res.status(500).send("칩 로그 오류");
-            result.chipLog = chipLog;
-            res.render("player/stats", { result });
-        })
+        
+        var result = stats;
+        stats.playedGamesLog.forEach( gLogId => {
+            gameLogModel.findById(gLogId, (err, gLog) => {
+                if(err) res.status(500).send("전적 게임 id 조회 오류");
+                result.playedGameLog.push(gLog);
+            });
+        });
+        res.render("player/stats", { result });
     })
-    
 }
 
+const getChipLog = (req, res) => {
+    const nick = req.params.nick;
 
+    playerChipLogModel.find({ nick }, (err, result) => {
+        if(err) return res.status(500).send("칩 로그 조회 오류");
+        const chartSet = {
+            type: 'line',
+            data: {
+            labels: Array.from(result, cLog => onlyDayMonth(cLog.when)),
+            datasets: [
+                {
+                label: "Chips",
+                data: Array.from(result, cLog => cLog.chips),
+                backgroundColor: [
+                    'rgba(200, 99, 132, .7)',
+                ],
+                borderColor: [
+                    'rgba(200, 99, 132, .7)',
+                ],
+                borderWidth: 2
+                },
+            ]
+            },
+            options: {
+            responsive: true
+            }
+        };
+        res.json(chartSet);
+    });
+}
 
-module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats };
+const onlyDayMonth = (d) => {
+    arr = d.split(" ");
+    return `${arr[2]} ${arr[1]}`;
+}
+
+module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats, getChipLog };

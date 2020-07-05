@@ -65,6 +65,7 @@ module.exports = (socket, next) => {
                             console.log("seccess: " + player);
                             socket.emit("Register", { data: "success" });
                             playerStatsModel.create({ "_id": player._id, "nick": nick });
+                            playerChipLogModel.create({ nick, chips: 1000 });
                         }
                     });
                 });
@@ -113,11 +114,18 @@ module.exports = (socket, next) => {
                             if(Number(update) > 0){
                                 result.roundWinCnt++;
                                 result.exp += 2;
+                                result.tokensEarned += Number(update);
                             }
-                            const newChipLog = new playerChipLogModel({ nick, chips: result.tokens });
-                            newChipLog.save((err, chipLog) => {
-                                if(err) return console.log("new ChipLog err");
-                            })
+                            if(Number(update) != 0) {
+                                playerChipLogModel.findOneAndUpdate(
+                                    { nick, when: new Date(Date.now()).toDateString() },
+                                    { chips: result.tokens },
+                                    { new: true },
+                                    (err, cLogUpdate) => {
+                                        if(err) return console.log("chipLog Update err");
+                                    }
+                                );
+                            }
                         }
                         break;
                 }
@@ -154,9 +162,21 @@ module.exports = (socket, next) => {
 
     // gameLog
     socket.on("gameStartLog", (data) => {
-        gameLogModel.create(data, (err, result) => {
+        gameLogModel.create(data, (err, gameLog) => {
             if(err) return console.log(err);
-            socket.emit("gameStartLog", result);
+            socket.emit("gameStartLog", gameLog);
+
+            for(i=0;i<=8;i++){
+                if(gameLog[`p${i}`]){
+                    playerStatsModel.findOneAndUpdate(
+                        { nick: gameLog[`p${i}`] },
+                        { $push: { playedGamesLog: gameLog._id } },
+                        { new: true },
+                        (err, result) => {
+                            if(err) return console.log("전적 게임로그 업데이트 오류");
+                        })
+                } else break;
+            }
         });
     });
 

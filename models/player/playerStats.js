@@ -22,6 +22,10 @@ const playerStatsSchema = new mongoose.Schema({
         type: Number,
         default: 1000,
     },
+    tokensEarned: {
+        type: Number,
+        default: 0,
+    },
     gamePlayCnt: {
         type: Number,
         default: 0,
@@ -32,7 +36,7 @@ const playerStatsSchema = new mongoose.Schema({
     },
     gameWinrate: {
         type: Number,
-        default: 0,
+        default: 0.00,
     },
     roundPlayCnt: {
         type: Number,
@@ -44,8 +48,12 @@ const playerStatsSchema = new mongoose.Schema({
     },
     roundWinrate: {
         type: Number,
-        default: 0,
-    }
+        default: 0.00,
+    },
+    playedGamesLog: {
+        type: Array,
+        default: [],
+    },
 })
 
 const playerStats = mongoose.model("playerStats", playerStatsSchema, "playerStats");

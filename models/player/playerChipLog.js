@@ -7,8 +7,8 @@ const playerChipLogSchema = new mongoose.Schema({
         required: true,
     },
     when: {
-        type: Date,
-        Default: Date.now,
+        type: String,
+        default: new Date(Date.now()).toDateString(),
     },
     chips: {
         type: Number,
