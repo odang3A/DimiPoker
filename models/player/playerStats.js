@@ -50,7 +50,11 @@ const playerStatsSchema = new mongoose.Schema({
         type: Number,
         default: 0.00,
     },
-    playedGamesLog: {
+    playedGameLogId: {
+        type: Array,
+        default: [],
+    },
+    playedGameLog: {
         type: Array,
         default: [],
     },

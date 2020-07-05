@@ -138,7 +138,7 @@ const showStats = (req, res) => {
         //if(!result) return res.status(404).send("일치하는 플레이어가 없습니다.");
         
         var result = stats;
-        stats.playedGamesLog.forEach( gLogId => {
+        stats.playedGameLogId.forEach( gLogId => {
             gameLogModel.findById(gLogId, (err, gLog) => {
                 if(err) res.status(500).send("전적 게임 id 조회 오류");
                 result.playedGameLog.push(gLog);
