@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../header"); %>
+<body>
+
+  <!-- Start your project here-->  
+  <%- include("../menu") %>
+
+  <div class="container mt-3">
+    
+    <table class="table table-hover">
+      <thead class="black white-text">
+        <tr>
+          <th>Rank</th>
+          <th class="th-lg">Player</th>
+          <!-- <th class="text-right">Chips</th> -->
+
+          <th class="text-right th-lg">
+            <div class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <%= th %> </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu">
+                <a class="dropdown-item" href="/api/rankings?field=chips">Chips</a>
+                <a class="dropdown-item" href="/api/rankings?field=earned-chips">Earned Chips</a>
+                <a class="dropdown-item" href="/api/rankings?field=playtime">Playtime</a>
+                <a class="dropdown-item" href="/api/rankings?field=game-wins">Game Wins</a>
+                <a class="dropdown-item" href="/api/rankings?field=played-games">Played Games</a>
+                <a class="dropdown-item" href="/api/rankings?field=game-winrate">Game Winrate (%)</a>
+                <a class="dropdown-item" href="/api/rankings?field=round-wins">Round Wins</a> 
+                <a class="dropdown-item" href="/api/rankings?field=played-rounds">Played Rounds</a> 
+                <a class="dropdown-item" href="/api/rankings?field=round-winrate">Round Winrate (%)</a> 
+                <a class="dropdown-item" href="/api/rankings?field=level">Level</a> 
+              </div>
+            </div>
+          </th>
+
+        </tr>
+      </thead>
+      <tbody id="rankingsTable">
+        <% var r=0; 
+          result.forEach( player => { const { nick, field } = player; r++; %>
+        <tr style="cursor: pointer;" onclick="location.href='/api/player/<%= nick %>'">
+            <th scope="row"> <%= `#${r}` %> </th>
+            <td> <%= nick %> </td>
+            <td class="text-right"> <%= field %> </td>
+          </a>
+        </tr>
+        <% }) %>
+
+      </tbody>
+    </table>
+
+  </div>
+
+  
+  <%- include("../footer") %>
+
+
+</body>
+</html>

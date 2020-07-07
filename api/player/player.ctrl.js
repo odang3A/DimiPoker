@@ -76,7 +76,7 @@ const login = (req, res) => {
 
             const token = jwt.sign(player._id.toHexString(), "1234");
 
-            playerAuthModel.findByIdAndUpdate(player._id, { token }, (err, result) => {
+            playerAuthModel.findByIdAndUpdate(player._id, { token }, { new: true }, (err, result) => {
                 if(err) return res.status(500).send("로그인 서버 오류");
 
                 res.cookie("token", token, { httpOnly: true });
@@ -95,7 +95,7 @@ const checkAuth = (req, res, next) => {
         if(req.url !== "/api/account/profile") {
             return next();
         } else {
-            return res.render("user/login");
+            return res.render("player/login");
         }
     }
 
@@ -110,7 +110,7 @@ const checkAuth = (req, res, next) => {
                 res.clearCookie("token");
                 return res.render("player/login");
             }
-            res.locals.player = { nick: player.nick };
+            res.locals.player = { id: player.id ,nick: player.nick };
             next();
         })
     })
@@ -138,13 +138,13 @@ const showStats = (req, res) => {
         //if(!result) return res.status(404).send("일치하는 플레이어가 없습니다.");
         
         var result = stats;
-        stats.playedGameLogId.forEach( gLogId => {
-            gameLogModel.findById(gLogId, (err, gLog) => {
+        if(result){
+            gameLogModel.find({ _id: { $in: stats.playedGameLogId }}, (err, gLogs) => {
                 if(err) res.status(500).send("전적 게임 id 조회 오류");
-                result.playedGameLog.push(gLog);
+                result.playedGameLog = gLogs;
+                res.render("player/stats", { result });
             });
-        });
-        res.render("player/stats", { result });
+        } else res.render("player/stats", { result });
     })
 }
 

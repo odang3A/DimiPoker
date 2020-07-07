@@ -8,8 +8,8 @@
 
     <div class="container">
         <% if(result) { %>
-        <div class="media" style="padding: 20px">
-            <img class="d-flex mr-3" src="https://mdbootstrap.com/img/Photos/Others/placeholder1.jpg" alt="Generic placeholder image">
+        <div class="media p-4">
+            <i class="fas fa-user fa-4x pr-4"></i>
             <div class="media-body">
                 <h5 class="mt-0 font-weight-bold" id="nick"><%= result.nick %></h5>
                 
@@ -26,8 +26,8 @@
               aria-selected="true">Summary</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="games-tab" data-toggle="tab" href="#games" role="tab" aria-controls="games"
-              aria-selected="false">Games</a>
+            <a class="nav-link" id="gameHistory-tab" data-toggle="tab" href="#gameHistory" role="tab" aria-controls="gameHistory"
+              aria-selected="false">Game History</a>
           </li>
         </ul>
         
@@ -38,9 +38,9 @@
             <%- include("./statsTab") %>
 
           </div>
-          <div class="tab-pane fade" id="games" role="tabpanel" aria-labelledby="games-tab">
+          <div class="tab-pane fade" id="gameHistory" role="tabpanel" aria-labelledby="gameHistory-tab">
             
-            <%- include("./gamesTab") %>
+            <%- include("./gameHistoryTab") %>
 
           </div>
 
@@ -48,7 +48,7 @@
         <!--./stats tab-->
 
         <% } else { %>
-            <div style="padding: 20px;">
+            <div style="padding: 20px; text-align: center;">
                 <h1>no results</h1>
             </div>
             <%- include("../search"); %>

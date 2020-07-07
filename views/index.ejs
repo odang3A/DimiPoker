@@ -30,11 +30,13 @@
     <!-- Search form -->
     <%- include("search"); %>
     
-    <hr class="my-4">
+    <hr class="my-5">
+
+    <h3 class="card-title h2"> Download Game </h3>
   
     <div class="pt-2">
-      <button type="button" class="btn btn-blue waves-effect">Buy now <span class="far fa-gem ml-1"></span></button>
-      <button type="button" class="btn btn-outline-primary waves-effect">Download <i class="fas fa-download ml-1"></i></button>
+      <a type="button" class="btn btn-outline-primary waves-effect" href="/api/download/pc"> PC <i class="fas fa-download ml-1"></i></a>
+      <a type="button" class="btn btn-outline-primary waves-effect" href="/api/download/android"> Android <i class="fab fa-android fa-lg ml-1"></i></a>
     
     </div>
   
