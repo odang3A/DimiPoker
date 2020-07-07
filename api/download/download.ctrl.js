@@ -8,7 +8,10 @@ const downloadForPC = (req, res) => {
 }
 
 const downloadForAndroid = (req, res) => {
-    res.send("and");
+    const filePath = "gameFiles/PokerApp.zip"
+    res.download(filePath, "PokerApp.zip", (err) => {
+        if(err) return res.status(500).send(err);
+    })
 }
 
 module.exports = { downloadForPC, downloadForAndroid };
