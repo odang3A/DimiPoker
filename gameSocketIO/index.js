@@ -117,12 +117,17 @@ module.exports = (socket, next) => {
                                 result.tokensEarned += Number(update);
                             }
                             if(Number(update) != 0) {
-                                playerChipLogModel.findOneAndUpdate(
+                                playerChipLogModel.findOne(
                                     { nick, when: new Date(Date.now()).toDateString() },
                                     { chips: result.tokens },
                                     { new: true },
-                                    (err, cLogUpdate) => {
+                                    (err, cLogUpdated) => {
                                         if(err) return console.log("chipLog Update err");
+                                        if(!cLogUpdated) {
+                                            playerChipLogModel.create({ nick, chips: result.tokens }, (err, cLogCreated) => {
+                                                if(err) return console.log("chipLog Create err");
+                                            })
+                                        }
                                     }
                                 );
                             }
