@@ -10,13 +10,7 @@ module.exports = (socket, next) => {
 
     console.log("connected");
 
-    socket.emit("SendMessageByNode", { name: "Node", data:"Hello Unity!" });
-
-    socket.on("SendMessageByUnity", (data) => {
-        console.log(`[Message from Unity] ${data.name}: ${data.data}`);
-        var msg = { name: "Node", data: "Hello again!" };
-        socket.emit("Hello again", msg);
-    });
+    socket.emit("CheckVersion", { version: "2.0.0" });
 
     // playerAuth
     socket.on("SignIn", (data) => {
