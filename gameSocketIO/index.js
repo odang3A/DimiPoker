@@ -82,6 +82,7 @@ module.exports = (socket, next) => {
     // gamePlay
     socket.on("UpdatePlayerStats", (data) => {
         const { nick, update } = data;
+        console.log(data);
         playerStatsModel.findOne({ "nick": nick },
             (err, result) => {
                 if(err) return console.log(`err: ${err}`);
