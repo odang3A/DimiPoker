@@ -49,6 +49,7 @@ module.exports = (socket, next) => {
 
     socket.on("SignOut", (data) => {
         const nick = data.nick;
+        console.log(nick);
         playerAuthModel.findOneAndUpdate({ nick }, { playing: 0 }, (err) => {
             if(err) return console.log("signout err");
             console.log(result);
