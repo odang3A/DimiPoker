@@ -24,6 +24,10 @@ const playerAuthSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    playing: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const playerAuth = mongoose.model("playerAuth", playerAuthSchema, "playerAuths");

@@ -5,6 +5,7 @@ const playerChipLogModel = require("../models/player/playerChipLog");
 const gameLogModel = require("../models/game/gameLog");
 const roundLogModel = require("../models/game/roundLog");
 const bcrypt = require("bcrypt");
+const playerAuth = require("../models/player/playerAuth");
 
 module.exports = (socket, next) => {
 
@@ -28,7 +29,14 @@ module.exports = (socket, next) => {
 
                     else if(isMatch) {
                         //console.log("success!");
-                        socket.emit("SignIn", { isAble: true, mess: result.nick });
+                        if(result.playing != 0){ //if playing
+                            socket.emit("SignIn", { isAble: false, mess: "Player is already playing" });
+                        } else {
+                            playerAuthModel.findByIdAndUpdate(result._id, { playing: 1 }, (err) => {
+                                if(err) return console.log("playing err");
+                                socket.emit("SignIn", { isAble: true, mess: result.nick });
+                            })
+                        }
                     }
                     else {
                         //console.log("wrong passwd");
@@ -38,6 +46,13 @@ module.exports = (socket, next) => {
             }
         });
     });
+
+    socket.on("SignOut", (data) => {
+        const nick = data.nick;
+        playerAuthModel.findOneAndUpdate({ nick }, { playing: 0 }, (err) => {
+            if(err) return console.log("signout err");
+        })
+    })
 
     socket.on("Register", (data) => {
         console.log(`[Register] ${data.id} : ${data.nick} : ${data.passwd}`);
@@ -82,7 +97,7 @@ module.exports = (socket, next) => {
     // gamePlay
     socket.on("UpdatePlayerStats", (data) => {
         const { nick, update } = data;
-        console.log(data);
+
         playerStatsModel.findOne({ "nick": nick },
             (err, result) => {
                 if(err) return console.log(`err: ${err}`);
