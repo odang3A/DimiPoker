@@ -132,12 +132,14 @@ const logout = (req, res) => {
 const showStats = (req, res) => {
     const nick = req.query.nick;
 
-    if(!nick) return res.status(400).send("입력값이 없습니다.")
+    var result = null;
+
+    if(!nick) return res.status(400).render("player/stats", { result });
     playerStatsModel.findOne({ nick }, (err, stats) => {
         if(err) return res.status(500).send("사용자 조회 오류");
         //if(!result) return res.status(404).send("일치하는 플레이어가 없습니다.");
         
-        var result = stats;
+        result = stats;
         if(result){
             gameLogModel.find({ _id: { $in: stats.playedGameLogId }}, (err, gLogs) => {
                 if(err) res.status(500).send("전적 게임 id 조회 오류");
