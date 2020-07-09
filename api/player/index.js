@@ -7,7 +7,7 @@ router.get("/check-id/:id", ctrl.checkId);
 router.get("/check-nick/:nick", ctrl.checkNick);
 router.get("/login", ctrl.showLoginPage);
 router.get("/logout", ctrl.logout);
-router.get("/:nick", ctrl.showStats);
+router.get("/", ctrl.showStats);
 router.get("/:nick/chipLog", ctrl.getChipLog);
 
 router.post("/signup", ctrl.signup);

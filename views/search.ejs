@@ -27,7 +27,7 @@ $(function() {
     event.preventDefault();
     const nick = $("#nick").val();
 
-    location.href = "/api/player/" + nick;
+    location.href = "/api/player?nick=" + nick;
     })
 })
 </script>

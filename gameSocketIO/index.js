@@ -11,7 +11,7 @@ module.exports = (socket, next) => {
 
     console.log("connected");
 
-    socket.emit("CheckVersion", { version: "2.0.0" });
+    socket.emit("CheckVersion", { version: "2.0.1" });
 
     // playerAuth
     socket.on("SignIn", (data) => {
@@ -30,7 +30,7 @@ module.exports = (socket, next) => {
                     else if(isMatch) {
                         //console.log("success!");
                         if(result.playing != 0){ //if playing
-                            socket.emit("SignIn", { isAble: false, mess: "Player is already playing" });
+                            socket.emit("SignIn", { isAble: false, mess: "Aalready playing" });
                         } else {
                             playerAuthModel.findByIdAndUpdate(result._id, { playing: 1 }, (err) => {
                                 if(err) return console.log("playing err");
@@ -57,13 +57,14 @@ module.exports = (socket, next) => {
     })
 
     socket.on("Register", (data) => {
-        console.log(`[Register] ${data.id} : ${data.nick} : ${data.passwd}`);
+        const { id, nick, passwd } = data;
 
-        playerAuthModel.findOne({$or: [{id: data.id},{nick: data.nick}]}, (err, result) => {
+        console.log(`[Register] ${id} : ${nick} : ${passwd}`);
+
+        playerAuthModel.findOne({$or: [{ id },{ nick }]}, (err, result) => {
             if(err) return console.log("register err");
             else if(result) socket.emit("Register", { isAble: false, mess: "Can't use Id or Nick" });
             else {
-                const { id,  nick, passwd } = data;
                 const saltRounds = 10;
 
                 bcrypt.hash(passwd, saltRounds, (err, hash) => {

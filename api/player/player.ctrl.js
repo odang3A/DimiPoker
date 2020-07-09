@@ -130,7 +130,7 @@ const logout = (req, res) => {
 }
 
 const showStats = (req, res) => {
-    const nick = req.params.nick;
+    const nick = req.query.nick;
 
     if(!nick) return res.status(400).send("입력값이 없습니다.")
     playerStatsModel.findOne({ nick }, (err, stats) => {

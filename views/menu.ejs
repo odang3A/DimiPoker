@@ -28,7 +28,7 @@
       <% } else { %>
       <i class="fas fa-user"></i> <%= player.nick %> </a>
       <div class="dropdown-menu dropdown-info" aria-labelledby="navbarDropdownMenuLink-4">
-        <a class="dropdown-item" href="/api/player/<%= player.nick %>">My Stats</a>
+        <a class="dropdown-item" href="/api/player?nick=<%= player.nick %>">My Stats</a>
         <a class="dropdown-item" href="/api/player/logout">Logout</a>
       <% } %>
       </div>
@@ -57,12 +57,7 @@
       event.preventDefault();
       const nick = $("#nickNav").val();
 
-      location.href = "/api/player/" + nick;
-    })
-
-    $('#myTab a').on('click', function (e) {
-      e.preventDefault()
-      $(this).tab('show')
+      location.href = "/api/player?nick=" + nick;
     })
   })
 </script>

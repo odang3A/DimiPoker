@@ -38,7 +38,7 @@
       <tbody id="rankingsTable">
         <% var r=0; 
           result.forEach( player => { const { nick, field } = player; r++; %>
-        <tr style="cursor: pointer;" onclick="location.href='/api/player/<%= nick %>'">
+        <tr style="cursor: pointer;" onclick="location.href='/api/player?nick=<%= nick %>'">
             <th scope="row"> <%= `#${r}` %> </th>
             <td> <%= nick %> </td>
             <td class="text-right"> <%= field %> </td>
