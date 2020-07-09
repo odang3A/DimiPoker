@@ -129,7 +129,7 @@ module.exports = (socket, next) => {
                                 result.tokensEarned += Number(update);
                             }
                             if(Number(update) != 0) {
-                                playerChipLogModel.findOne(
+                                playerChipLogModel.findOneAndUpdate(
                                     { nick, when: new Date(Date.now()).toDateString() },
                                     { chips: result.tokens },
                                     { new: true },
