@@ -68,30 +68,36 @@ module.exports = (socket, next) => {
     socket.on("Register", (data) => {
         const { id, nick, passwd } = data;
 
-        console.log(`[Register] ${id} : ${nick} : ${passwd}`);
+        if(nick.includes('/', '?')){
+            socket.emit("Register", { isAble: false, mess: "Can't use /, ? on Nick"})
+        }
 
-        playerAuthModel.findOne({$or: [{ id },{ nick }]}, (err, result) => {
-            if(err) return console.log("register err");
-            else if(result) socket.emit("Register", { isAble: false, mess: "Can't use Id or Nick" });
-            else {
-                const saltRounds = 10;
+        else{
+            console.log(`[Register] ${id} : ${nick} : ${passwd}`);
 
-                bcrypt.hash(passwd, saltRounds, (err, hash) => {
-                    if(err) return console.log(err);
+            playerAuthModel.findOne({$or: [{ id },{ nick }]}, (err, result) => {
+                if(err) return console.log("register err");
+                else if(result) socket.emit("Register", { isAble: false, mess: "Can't use Id or Nick" });
+                else {
+                    const saltRounds = 10;
 
-                    const newPlayer = playerAuthModel({ id, nick, passwd: hash });
-                    newPlayer.save((err, player) => {
-                        if(err) return console.log("register err");
-                        else {
-                            //console.log("seccess: " + player);
-                            socket.emit("Register", { isAble: true, mess: "Success" });
-                            playerStatsModel.create({ "_id": player._id, "nick": nick });
-                            playerChipLogModel.create({ nick, chips: 1000 });
-                        }
+                    bcrypt.hash(passwd, saltRounds, (err, hash) => {
+                        if(err) return console.log(err);
+
+                        const newPlayer = playerAuthModel({ id, nick, passwd: hash });
+                        newPlayer.save((err, player) => {
+                            if(err) return console.log("register err");
+                            else {
+                                //console.log("seccess: " + player);
+                                socket.emit("Register", { isAble: true, mess: "Success" });
+                                playerStatsModel.create({ "_id": player._id, "nick": nick });
+                                playerChipLogModel.create({ nick, chips: 1000 });
+                            }
+                        });
                     });
-                });
-            }
-        });
+                }
+            });
+        }
     });
     // playerAuth
 

@@ -72,7 +72,7 @@
           var cha = $("#lineChart")[0].getContext('2d');
 
           $.ajax({
-            url: `/api/player/${$("#nick").text()}/chipLog`,
+            url: `/api/player/chipLog?nick=${$("#nick").text()}`,
             type: "get",
           })
           .done((chartSet) => {
