@@ -1,7 +1,6 @@
 const express = require("express");
 const playerAuthModel = require("../../models/player/playerAuth");
 const playerStatsModel = require("../../models/player/playerStats");
-const playerChipLogModel = require("../../models/player/playerChipLog");
 const gameLogModel = require("../../models/game/gameLog");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -33,16 +32,12 @@ const signup = (req, res) => {
             newPlayer.save((err, pAuth) => {
                 if(err) return res.status(500).send("회원가입 오류 발생");
                 const { _id } = pAuth;
-                const newStats = playerStatsModel({ _id, nick });
+                const newStats = playerStatsModel({ _id, nick, chipLogWhen: [new Date(Date.now()).toDateString()], chipLogChips: [1000] });
                 newStats.save((err, pStats) => {
                     if(err) return res.status(500).send("전적 생성 오류 발생");
 
-                    playerChipLogModel.create({ nick, chips: 1000 }, (err, cLog) => {
-                        if(err) return res.status(500).send("칩 로그 생성 오류 발생");
-
-                        res.status(201).send(pAuth);
-                    });
-                })
+                    res.status(201).send(pAuth);
+                });
             })
         })
     })
@@ -157,16 +152,16 @@ const showStats = (req, res) => {
 const getChipLog = (req, res) => {
     const nick = req.query.nick;
 
-    playerChipLogModel.find({ nick }, (err, result) => {
+    playerStatsModel.findOne({ nick }, (err, result) => {
         if(err) return res.status(500).send("칩 로그 조회 오류");
         const chartSet = {
             type: 'line',
             data: {
-            labels: Array.from(result, cLog => onlyDayMonth(cLog.when)),
+            labels: Array.from(result.chipLogWhen, d => onlyDayMonth(d)),
             datasets: [
                 {
                 label: "Chips",
-                data: Array.from(result, cLog => cLog.chips),
+                data: result.chipLogChips,
                 backgroundColor: [
                     'rgba(200, 99, 132, .7)',
                 ],

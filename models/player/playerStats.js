@@ -58,6 +58,14 @@ const playerStatsSchema = new mongoose.Schema({
         type: Array,
         default: [],
     },
+    chipLogWhen: {
+        type: Array,
+        default: []
+    },
+    chipLogChips: {
+        type: Array,
+        default: []
+    },
 })
 
 const playerStats = mongoose.model("playerStats", playerStatsSchema, "playerStats");

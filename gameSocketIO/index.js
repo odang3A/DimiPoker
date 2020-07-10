@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const playerAuthModel = require("../models/player/playerAuth");
 const playerStatsModel = require("../models/player/playerStats");
-const playerChipLogModel = require("../models/player/playerChipLog");
 const gameLogModel = require("../models/game/gameLog");
 const roundLogModel = require("../models/game/roundLog");
 const bcrypt = require("bcrypt");
@@ -90,8 +89,7 @@ module.exports = (socket, next) => {
                             else {
                                 //console.log("seccess: " + player);
                                 socket.emit("Register", { isAble: true, mess: "Success" });
-                                playerStatsModel.create({ "_id": player._id, "nick": nick });
-                                playerChipLogModel.create({ nick, chips: 1000 });
+                                playerStatsModel.create({ "_id": player._id, "nick": nick, chipLogWhen: [new Date(Date.now()).toDateString()], chipLogChips: [1000]});
                             }
                         });
                     });
@@ -145,19 +143,13 @@ module.exports = (socket, next) => {
                                 result.tokensEarned += Number(update);
                             }
                             if(Number(update) != 0) {
-                                playerChipLogModel.findOneAndUpdate(
-                                    { nick, when: new Date(Date.now()).toDateString() },
-                                    { chips: result.tokens },
-                                    { new: true },
-                                    (err, cLogUpdated) => {
-                                        if(err) return console.log("chipLog Update err");
-                                        if(!cLogUpdated) {
-                                            playerChipLogModel.create({ nick, chips: result.tokens }, (err, cLogCreated) => {
-                                                if(err) return console.log("chipLog Create err");
-                                            })
-                                        }
-                                    }
-                                );
+                                if(result.chipLogWhen[result.chipLogWhen.length-1] == new Date(Date.now()).toDateString()){
+                                    result.chipLogChips.pop();
+                                    result.chipLogChips.push(result.tokens);
+                                } else {
+                                    result.chipLogWhen.push(new Date(Date.now()).toDateString());
+                                    result.chipLogChips.push(result.tokens);
+                                }
                             }
                         }
                         break;
