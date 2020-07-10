@@ -10,25 +10,40 @@
   <div class="jumbotron text-center" style="max-width: 1500px; margin:auto;">
 
     <!-- Title -->
-    <h2 class="card-title h1">Dimi Poker</h2>
-    <!-- Subtitle -->
-    <p class="blue-text my-4 font-weight-bold">Powerful and free Material Design UI KIT</p>
-  
-    <!-- Grid row -->
-    <div class="row d-flex justify-content-center">
-  
-      <!-- Grid column -->
-      <div class="col-xl-7 pb-2">
-  
-        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid dolorem ea distinctio exercitationem delectus qui, quas eum architecto, amet quasi accusantium, fugit consequatur ducimus obcaecati numquam molestias hic itaque accusantium doloremque laudantium, totam rem aperiam.</p>
-  
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <h2 class="card-title h1">Dimi Poker</h2>
+          <!-- Subtitle -->
+          <p class="blue-text my-4 font-weight-bold">Powerful and free Material Design UI KIT</p>
+        
+          <!-- Grid row -->
+          <div class="row d-flex justify-content-center">
+        
+            <!-- Grid column -->
+            <div class="col-xl-7 pb-2">
+        
+              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid dolorem ea distinctio exercitationem delectus qui, quas eum architecto, amet quasi accusantium, fugit consequatur ducimus obcaecati numquam molestias hic itaque accusantium doloremque laudantium, totam rem aperiam.</p>
+        
+            </div>
+            <!-- Grid column -->
+        
+          </div>
+          <!-- Grid row -->
+          <!-- Search form -->
+          <%- include("search"); %>
+        </div>
+        <div class="col-md-2 text-left">
+          Now Playing
+          <ul class="list-group" id="nowPlaying">
+            
+          </ul>
+        </div>
       </div>
-      <!-- Grid column -->
-  
+
+
     </div>
-    <!-- Grid row -->
-    <!-- Search form -->
-    <%- include("search"); %>
     
     <hr class="my-5">
 
@@ -46,6 +61,40 @@
   <!-- End your project here-->
 
   <%- include("footer") %>
+
+  <script>
+    $(document).ready(() => {
+      updateNowPlaying();
+      setInterval(updateNowPlaying, 15000);
+    });
+
+    function updateNowPlaying(){
+      $.ajax({
+        url: "/api/player/nowPlaying",
+        type: "get"
+      })
+      .done((playingArr) => {
+        var html = "";
+        if(playingArr.length != 0){
+          playingArr.forEach(player => {
+            html += `<li class="list-group-item list-group-item-action py-1"
+            style="cursor: pointer;"
+              onclick="location.href='/api/player?nick=${player.nick}'"
+              > ${player.nick} 
+              </li>`;
+          });
+        } else {
+          html = "(None)";
+        }
+        $("#nowPlaying").empty();
+        $("#nowPlaying").append(html);
+      })
+      .fail((request, status, error) => {
+          alert(request.responseText);
+      });
+    }
+
+  </script>
 
 </body>
 </html>

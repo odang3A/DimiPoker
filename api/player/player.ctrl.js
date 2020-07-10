@@ -186,4 +186,11 @@ const onlyDayMonth = (d) => {
     return `${arr[2]} ${arr[1]}`;
 }
 
-module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats, getChipLog };
+const nowPlaying = (req, res) => {
+    playerAuthModel.find({playing: 1}, (err, result) => {
+        if(err) return res.status(500).send("접속중인 플레이어 조회 오류");
+        res.json(result);
+    })
+}
+
+module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats, getChipLog, nowPlaying };

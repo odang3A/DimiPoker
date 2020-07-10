@@ -11,7 +11,7 @@ module.exports = (socket, next) => {
 
     console.log("connected");
 
-    socket.emit("CheckVersion", { version: "2.0.1" });
+    socket.emit("CheckVersion", { version: "2.0.2" });
 
     // playerAuth
     socket.on("SignIn", (data) => {

@@ -9,6 +9,7 @@ router.get("/login", ctrl.showLoginPage);
 router.get("/logout", ctrl.logout);
 router.get("/", ctrl.showStats);
 router.get("/:nick/chipLog", ctrl.getChipLog);
+router.get("/nowPlaying", ctrl.nowPlaying);
 
 router.post("/signup", ctrl.signup);
 router.post("/login", ctrl.login);
