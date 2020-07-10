@@ -18,8 +18,8 @@ const signup = (req, res) => {
     const { id, nick, passwd } = req.body;
     if(!id || !nick || !passwd) return res.status(400).send("필수 입력값이 입력되지 않았습니다.");
 
-    if(nick.includes('/', '?')){
-        return res.status(400).send("닉네임에 /, ? 은 사용할 수 없습니다");
+    if(nick.includes('/', '?', '&')){
+        return res.status(400).send("닉네임에 /, ?, & 은 사용할 수 없습니다");
     }
     
     playerAuthModel.findOne({$or: [{ id },{ nick }]}, (err, player) => {

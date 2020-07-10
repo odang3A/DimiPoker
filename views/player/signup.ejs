@@ -118,8 +118,8 @@
           $("#nick").focusout((event) => {
               event.preventDefault();
               const nick = $("#nick").val();
-              if(nick.includes('/', '?')){
-                $("#formNickHelpBlock").text("Can't use /, ?");
+              if(nick.includes('/', '?', '&')){
+                $("#formNickHelpBlock").text("Can't use /, ?, &");
                 $("#signup-btn").prop("disabled", true);
               }
 
