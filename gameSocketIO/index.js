@@ -32,7 +32,7 @@ module.exports = (socket, next) => {
                         if(result.playing != 0){ //if playing
                             socket.emit("SignIn", { isAble: false, mess: "Aalready playing" });
                         } else {
-                            playerAuthModel.findByIdAndUpdate(result._id, { playing: 1 }, (err) => {
+                            playerAuthModel.findByIdAndUpdate(result._id, { playing: 0 }, (err) => {
                                 if(err) return console.log("playing err");
                                 socket.emit("SignIn", { isAble: true, mess: result.nick });
                             })
@@ -51,6 +51,15 @@ module.exports = (socket, next) => {
         const nick = data.nick;
         //console.log(nick);
         playerAuthModel.findOneAndUpdate({ nick }, { playing: 0 }, (err, result) => {
+            if(err) return console.log("signout err");
+            //console.log(result);
+        })
+    })
+
+    socket.on("IsPlaying", (data) => {
+        const nick = data.nick;
+
+        playerAuthModel.findOneAndUpdate({ nick }, { playing: 1 }, (err, result) => {
             if(err) return console.log("signout err");
             //console.log(result);
         })

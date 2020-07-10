@@ -4,6 +4,7 @@ const server = require("http").createServer(express);
 const io = require("socket.io")(server);
 const mongoose = require("mongoose");
 const playerCtrl = require("./api/player/player.ctrl");
+const playerAuthModel = require("./models/player/playerAuth");
 require('dotenv').config();
 
 var createError = require('http-errors');
@@ -37,6 +38,15 @@ app.listen(webPORT, () => {
 });
 
 io.use(require("./gameSocketIO"));
+
+setInterval(() => {
+    playerAuthModel.update({ playing: 1 }, { playing: 0 }, { new: true }, (err, result) => {
+        if(err) console.log("update playing err");
+        if(result) {
+            io.emit("IsPlaying", {});
+        }
+    })
+}, 60000); //플레이중인지 확인
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
