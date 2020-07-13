@@ -65,9 +65,9 @@ module.exports = (socket, next) => {
 
     socket.on("Register", (data) => {
         const { id, nick, passwd } = data;
-
-        if(nick.includes('/', '?', '&')){
-            socket.emit("Register", { isAble: false, mess: "Can't use /, ?, & on Nick"})
+        const regex = /[\/?&.]/;
+        if(nick.search(regex) != -1){
+            socket.emit("Register", { isAble: false, mess: "Can't use /, ?, &, . on Nick"})
         }
 
         else{

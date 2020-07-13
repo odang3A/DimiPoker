@@ -118,23 +118,28 @@
           $("#nick").focusout((event) => {
               event.preventDefault();
               const nick = $("#nick").val();
-              if(nick.includes('/', '?', '&')){
-                $("#formNickHelpBlock").text("Can't use /, ?, &");
+              const regex = /[\/?&.]/;
+              if(nick.search(regex) != -1){
+                $("#formNickHelpBlock").text("Can't use /, ?, &, .");
                 $("#signup-btn").prop("disabled", true);
               }
 
-              if(nick){
-                $.ajax({
-                    url: "/api/player/check-nick/" + nick,
-                    type: "get"
-                })
-                .done((isAvailable) => {
-                    $("#formNickHelpBlock").text(isAvailable ? "" : "Nick not Available");
-                })
-                .fail((request, status, error) => {
-                    alert(request.responseText);
-                })
-            }
+              else {
+                $("#signup-btn").prop("disabled", false);
+
+                if(nick){
+                    $.ajax({
+                        url: "/api/player/check-nick/" + nick,
+                        type: "get"
+                    })
+                    .done((isAvailable) => {
+                        $("#formNickHelpBlock").text(isAvailable ? "" : "Nick not Available");
+                    })
+                    .fail((request, status, error) => {
+                        alert(request.responseText);
+                    })
+                }
+              }
           })
       });
   </script>

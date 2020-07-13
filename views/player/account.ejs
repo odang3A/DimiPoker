@@ -39,14 +39,14 @@
                                     <div class="md-form">
                                         <input type="text" id="editNick" class="form-control">
                                         <label for="editNickForm">Edit Nickname</label>
-                                        <small id="formNickHelpBlock" class="form-text text-muted mb-4">
+                                        <small id="formNickHelpBlock" class="form-text text-muted mb-4 text-left">
                     
                                         </small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-dark" data-dismiss="modal">Cancle</button>
-                                    <button class="btn btn-primary" type="submit">Edit</button>
+                                    <button class="btn btn-primary" type="submit" id="edit-btn">Edit</button>
                                 </div>
                             </form>
 
@@ -102,25 +102,6 @@
 
         <script>
             $(function() {
-                $("#deleteAccountForm").submit((e) => {
-                    e.preventDefault();
-                    const nick = $("#nick").text();
-                    const passwd = $("#deleteAccountFormPassword").val();
-                    if(passwd){
-                        $.ajax({
-                            url: "/api/player/account/signout",
-                            type: "delete",
-                            data: { nick, passwd }
-                        })
-                        .done(() => {
-                            location.href = "/";
-                        })
-                        .fail((request, status, error) => {
-                            alert(request.responseText);
-                        });
-                    }
-                })
-
                 $("#editNickForm").submit((e) => {
                     e.preventDefault();
                     const nick = $("#nick").text();
@@ -138,6 +119,56 @@
                         alert(request.responseText);
                     })
                 })
+
+                $("#editNick").keyup((event) => {
+                    event.preventDefault();
+                    const nick = $("#nick").text();
+                    const newNick = $("#editNick").val();
+                    const regex = /[\/?&.]/;
+                    if(newNick.search(regex) != -1){
+                        $("#formNickHelpBlock").text("Can't use /, ?, &, .");
+                        $("#edit-btn").prop("disabled", true);
+                    }
+
+                    else {
+                        $("#edit-btn").prop("disabled", false);
+                        if(newNick){
+                            $.ajax({
+                                url: "/api/player/check-nick/" + newNick,
+                                type: "get"
+                            })
+                            .done((isAvailable) => {
+                                $("#formNickHelpBlock").text(isAvailable ? "" : "Nick not Available");
+                                if(nick == newNick){
+                                    $("#formNickHelpBlock").text("");
+                                }
+                            })
+                            .fail((request, status, error) => {
+                                alert(request.responseText);
+                            })
+                        }
+                    }
+                })
+
+                $("#deleteAccountForm").submit((e) => {
+                    e.preventDefault();
+                    const nick = $("#nick").text();
+                    const passwd = $("#deleteAccountFormPassword").val();
+
+                    $.ajax({
+                        url: "/api/player/account/signout",
+                        type: "delete",
+                        data: { nick, passwd }
+                    })
+                    .done(() => {
+                        location.href = "/";
+                    })
+                    .fail((request, status, error) => {
+                        alert(request.responseText);
+                    });
+                })
+
+                
             })
         </script>
     </body>

@@ -21,8 +21,9 @@ const signup = (req, res) => {
     const { id, nick, passwd } = req.body;
     if(!id || !nick || !passwd) return res.status(400).send("필수 입력값이 입력되지 않았습니다.");
 
-    if(nick.includes('/', '?', '&')){
-        return res.status(400).send("닉네임에 /, ?, & 은 사용할 수 없습니다");
+    const regex = /[\/?&.]/;
+    if(nick.search(regex) != -1){
+        return res.status(400).send("닉네임에 /, ?, &, . 은 사용할 수 없습니다");
     }
     
     playerAuthModel.findOne({$or: [{ id },{ nick }]}, (err, player) => {
@@ -49,6 +50,7 @@ const signup = (req, res) => {
 
 const edit = (req, res) => {
     const { nick, newNick } = req.body;
+    if(!newNick) return res.status(400).send("새 닉네임이 입력되지 않았습니다.");
 
     playerAuthModel.findOne({ nick: newNick }, (err, player) => {
         if(err) res.status(500).send("플레이어 조회 오류");
@@ -68,7 +70,7 @@ const edit = (req, res) => {
 
 const signout = (req, res) => {
     const { nick, passwd } = req.body;
-    if( !nick || !passwd ) return res.status(400).send("비밀번호를 입력하지 않았습니다.");
+    if(!passwd) return res.status(400).send("비밀번호를 입력하지 않았습니다.");
 
     playerAuthModel.findOne({ nick }, (err, player) => {
         if(err) return res.status(500).send("사용자 조회 오류 발생");
