@@ -13,6 +13,10 @@ const showLoginPage = (req, res) => {
     res.render("player/login");
 }
 
+const showAccountPage = (req, res) => {
+    res.render("player/account");
+}
+
 const signup = (req, res) => {
     const { id, nick, passwd } = req.body;
     if(!id || !nick || !passwd) return res.status(400).send("필수 입력값이 입력되지 않았습니다.");
@@ -39,6 +43,45 @@ const signup = (req, res) => {
                     res.status(201).send(pAuth);
                 });
             })
+        })
+    })
+}
+
+const edit = (req, res) => {
+    const { nick, newNick } = req.body;
+
+    playerAuthModel.findOne({ nick: newNick }, (err, player) => {
+        if(err) res.status(500).send("플레이어 조회 오류");
+        if(player && nick != newNick) return res.status(409).send("이미 사용중인 닉네임입니다");
+
+        playerAuthModel.findOneAndUpdate({ nick }, { nick: newNick }, (err, currPlayer) => {
+            if(err) res.status(500).send("플레이어 업데이트 오류");
+            playerStatsModel.findByIdAndUpdate(currPlayer._id, { nick: newNick }, (err, result) => {
+                if(err) res.status(500).send("플레이어 업데이트 오류");
+                
+                res.json(player);
+            });
+        })
+        
+    })
+}
+
+const signout = (req, res) => {
+    const { nick, passwd } = req.body;
+    if( !nick || !passwd ) return res.status(400).send("비밀번호를 입력하지 않았습니다.");
+
+    playerAuthModel.findOne({ nick }, (err, player) => {
+        if(err) return res.status(500).send("사용자 조회 오류 발생");
+
+        bcrypt.compare(passwd, player.passwd, (err, isMatch) => {
+            if(err) return res.status(500).send("로그인 서버 오류");
+            if(!isMatch) return res.status(500).send("비밀번호가 일치하지 않습니다.");
+
+            playerAuthModel.findByIdAndDelete(player._id, (err, result) => {});
+            playerStatsModel.findByIdAndDelete(player._id, (err, result) => {});
+
+            res.clearCookie("token");
+            res.json(player);
         })
     })
 }
@@ -91,7 +134,7 @@ const checkAuth = (req, res, next) => {
     const token = req.cookies.token;
 
     if(!token) {
-        if(req.url !== "/api/account/profile") {
+        if(req.url !== "/api/player/account") {
             return next();
         } else {
             return res.render("player/login");
@@ -192,4 +235,4 @@ const nowPlaying = (req, res) => {
     })
 }
 
-module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats, getChipLog, nowPlaying };
+module.exports = { showSignupPage, showLoginPage, signup, checkId, checkNick, login, checkAuth, logout, showStats, getChipLog, nowPlaying, showAccountPage, signout, edit };

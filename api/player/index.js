@@ -10,8 +10,13 @@ router.get("/logout", ctrl.logout);
 router.get("/", ctrl.showStats);
 router.get("/chipLog", ctrl.getChipLog);
 router.get("/nowPlaying", ctrl.nowPlaying);
+router.get("/account", ctrl.showAccountPage);
 
 router.post("/signup", ctrl.signup);
 router.post("/login", ctrl.login);
+
+router.put("/account/edit", ctrl.edit)
+
+router.delete("/account/signout", ctrl.signout);
 
 module.exports = router;

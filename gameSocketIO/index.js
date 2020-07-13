@@ -4,7 +4,6 @@ const playerStatsModel = require("../models/player/playerStats");
 const gameLogModel = require("../models/game/gameLog");
 const roundLogModel = require("../models/game/roundLog");
 const bcrypt = require("bcrypt");
-const playerAuth = require("../models/player/playerAuth");
 
 module.exports = (socket, next) => {
 

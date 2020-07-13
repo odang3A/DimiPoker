@@ -10,13 +10,13 @@
   <div class="jumbotron text-center" style="max-width: 1500px; margin:auto;">
 
     <!-- Title -->
-    <div class="container">
+    <div class="justify-content-center">
       <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 mb-3">
           <h2 class="card-title h1">Dimi Poker</h2>
           <!-- Subtitle -->
-          <p class="blue-text my-4 font-weight-bold">Powerful and free Material Design UI KIT</p>
+          <p class="blue-text my-4 font-weight-bold">Powerful and free Poker Game</p>
         
           <!-- Grid row -->
           <div class="row d-flex justify-content-center">
@@ -24,7 +24,7 @@
             <!-- Grid column -->
             <div class="col-xl-7 pb-2">
         
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid dolorem ea distinctio exercitationem delectus qui, quas eum architecto, amet quasi accusantium, fugit consequatur ducimus obcaecati numquam molestias hic itaque accusantium doloremque laudantium, totam rem aperiam.</p>
+              <p class="card-text"></p>
         
             </div>
             <!-- Grid column -->
@@ -34,11 +34,16 @@
           <!-- Search form -->
           <%- include("search"); %>
         </div>
-        <div class="col-md-2 text-left">
-          Now Playing
-          <ul class="list-group" id="nowPlaying">
-            
-          </ul>
+        <div class="col-md-3 text-left">
+          <div class="card">
+            <div class="card-header py-2">
+              Now Playing
+            </div>
+            <ul class="list-group" id="nowPlaying">
+              
+            </ul>
+          </div>
+          
         </div>
       </div>
 
@@ -84,7 +89,7 @@
               </li>`;
           });
         } else {
-          html = "(None)";
+          html = `<div class="p-2 px-3">(None)</div>`;
         }
         $("#nowPlaying").empty();
         $("#nowPlaying").append(html);

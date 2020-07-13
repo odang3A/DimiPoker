@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("../header"); %>
+    <body>
+    <!-- Start your project here-->  
+        <%- include("../menu") %>
+
+        <div class="container">
+            <!-- Card -->
+            <div class="card testimonial-card col-lg-6 mx-auto my-3">
+                <!-- Background color -->
+                <div class="card-up indigo lighten-1"></div>
+
+                <div class="ml-auto mr-0 mt-2"><i type="button" class="fas fa-edit" data-toggle="modal" data-target="#editNickModal"></i></div>
+
+                <!-- Avatar -->
+                <div class="avatar mx-auto white mt-4">
+                    <i class="fas fa-user fa-4x"></i>
+                </div>
+            
+                <!-- Content -->
+                <div class="card-body text-center">
+                    <!-- Name -->
+                    <h4 class="card-title" id="nick"><%= player.nick %></h4> 
+                    <!-- edit nick -->
+                    <div class="modal fade" id="editNickModal" tabindex="-1" role="dialog" aria-labelledby="editNickModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="editNickModalLabel">Edit Nickname</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+
+                            <form id="editNickForm">
+                                <div class="modal-body">
+                                    <div class="md-form">
+                                        <input type="text" id="editNick" class="form-control">
+                                        <label for="editNickForm">Edit Nickname</label>
+                                        <small id="formNickHelpBlock" class="form-text text-muted mb-4">
+                    
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-dismiss="modal">Cancle</button>
+                                    <button class="btn btn-primary" type="submit">Edit</button>
+                                </div>
+                            </form>
+
+                        </div>
+                        </div>
+                    </div>
+                    <!-- /edit nick -->
+
+                    <hr>
+
+                    <!-- delete account -->
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAccountModal">
+                        Delete Account
+                    </button>
+                    
+                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account: <%= player.nick %></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <form id="deleteAccountForm">
+                                    <div class="modal-body">
+                                        <div class="md-form">
+                                            <input type="password" id="deleteAccountFormPassword" class="form-control">
+                                            <label for="deleteAccountFormPassword">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-dismiss="modal">Cancle</button>
+                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /delete account -->
+
+                </div>
+            
+            </div>
+            <!-- Card -->
+        </div>
+
+
+
+        <%- include("../footer") %>
+
+        <script>
+            $(function() {
+                $("#deleteAccountForm").submit((e) => {
+                    e.preventDefault();
+                    const nick = $("#nick").text();
+                    const passwd = $("#deleteAccountFormPassword").val();
+                    if(passwd){
+                        $.ajax({
+                            url: "/api/player/account/signout",
+                            type: "delete",
+                            data: { nick, passwd }
+                        })
+                        .done(() => {
+                            location.href = "/";
+                        })
+                        .fail((request, status, error) => {
+                            alert(request.responseText);
+                        });
+                    }
+                })
+
+                $("#editNickForm").submit((e) => {
+                    e.preventDefault();
+                    const nick = $("#nick").text();
+                    const newNick = $("#editNick").val();
+
+                    $.ajax({
+                        url: "/api/player/account/edit",
+                        type: "put",
+                        data: { nick, newNick }
+                    })
+                    .done(() => {
+                        location.href = "/api/player/account"
+                    })
+                    .fail((request, status, error) => {
+                        alert(request.responseText);
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>
