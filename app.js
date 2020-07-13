@@ -40,7 +40,7 @@ app.listen(webPORT, () => {
 io.use(require("./gameSocketIO"));
 
 setInterval(() => {
-    playerAuthModel.update({ playing: 1 }, { playing: 0 }, { new: true }, (err, result) => {
+    playerAuthModel.updateMany({ playing: 1 }, { playing: 0 }, { new: true }, (err, result) => {
         if(err) console.log("update playing err");
         if(result) {
             io.emit("IsPlaying", {});
