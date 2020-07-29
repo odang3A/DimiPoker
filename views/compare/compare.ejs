@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../header"); %>
+    <body>
+
+        <!-- Start your project here-->  
+        <%- include("../menu") %>
+
+        <div class="container">
+            <!-- search -->
+            <div class="card my-3">
+                <div class="card-body">
+                    <h3 class="card-title">Compare Player Stats</h3>
+                    <div class="card-text">Add your favorite players to compare stats and in-game performance.</div>
+                    <hr>
+                    <div class="card-text">
+                        <h5>Add by Nickname</h5>
+                        <!-- search input -->
+                        <div>
+                            <form class="input-group" id="searchCompare">
+                                <input class="form-control py-0" type="text" placeholder="Search for players" aria-label="Search" id="nick" required>
+                                <button class="input-group-text lighten-3 bg-white" type="submit">
+                                <i class="fas fa-search" aria-hidden="true" type="submit"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <!-- /search input -->
+                    </div>
+                </div>
+            </div>
+            <!-- /search -->
+
+            <!-- compare table -->
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm">
+                    <thead class="black white-text">
+                        <!-- players -->
+                        <tr id="players">
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="grey lighten-1"><th colspan="100%" scope="row">Overall Stats</th></tr>
+                        <tr id="chips">
+                            <th scope="row">Chips</th>
+                        </tr>
+                        <tr id="chipsEarned">
+                            <th scope="row">Chips Earned</th>
+                        </tr>
+                        <tr id="chipsLost">
+                            <th scope="row">Chips Lost</th>
+                        </tr>
+                        <tr id="earnsPerGame">
+                            <th scope="row">Earns per Game</th>
+                        </tr>
+                        <tr id="wins">
+                            <th scope="row">Wins</th>
+                        </tr>
+                        <tr id="losses">
+                            <th scope="row">Losses</th>
+                        </tr>
+                        <tr id="gamesPlayed">
+                            <th scope="row">Games Played</th>
+                        </tr>
+                        <tr id="winrate">
+                            <th scope="row">Winrate</th>
+                        </tr>
+                        <tr id="playTime">
+                            <th scope="row">Playtime</th>
+                        </tr>
+
+                        <tr class="grey lighten-1"><th colspan="100%" scope="row">Round Stats</th></tr>
+                        <tr id="roundWins">
+                            <th scope="row">Round Wins</th>
+                        </tr>
+                        <tr id="roundLosses">
+                            <th scope="row">Round Losses</th>
+                        </tr>
+                        <tr id="roundsPlayed">
+                            <th scope="row">Rounds Played</th>
+                        </tr>
+                        <tr id="roundWinrate">
+                            <th scope="row">Round Winrate</th>
+                        </tr>
+                        <tr id="roundsPerGame">
+                            <th scope="row">Rounds per Game</th>
+                        </tr>
+                        <tr id="earnsPerRound">
+                            <th scope="row">Earns per Round</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <%- include("../footer") %>
+
+        <script>
+            $(function() {
+                $("#searchCompare").submit((event) => {
+                    event.preventDefault();
+                    const nick = $("#nick").val();
+
+                    $.ajax({
+                        url: "/api/compare/" + nick,
+                        type: "get"
+                    })
+                    .done((data) => {
+                        if(data){
+                            const thAppendHTML = `
+                                <th name="col-${data.nick}">
+                                    <a href="/api/player?nick=${data.nick}" class="text-reset float-left h5" target="_blank">${data.nick}</a>
+
+                                    <button class="close float-left mx-1" aria-label="Close" id="removeBtn" value="${data.nick}">
+                                        <span aria-hidden="true" class="text-white h6 align-text-top">×</span>
+                                    </button>
+                                    
+                                </th>`;
+                            $("#players").append(thAppendHTML);
+
+                            $("#chips").append(`<td name="col-${data.nick}">${data.tokens}</td>`);
+                            $("#chipsEarned").append(`<td name="col-${data.nick}">${data.tokensEarned}</td>`);
+                            $("#chipsLost").append(`<td name="col-${data.nick}">${data.tokensEarned - data.tokens + 1000}</td>`);
+                            $("#earnsPerGame").append(`<td name="col-${data.nick}">${((data.tokens-1000)/(data.gamePlayCnt==0?1:data.gamePlayCnt)).toFixed(2)}</td>`);
+                            $("#wins").append(`<td name="col-${data.nick}">${data.gameWinCnt}</td>`);
+                            $("#losses").append(`<td name="col-${data.nick}">${data.gamePlayCnt - data.gameWinCnt}</td>`);
+                            $("#gamesPlayed").append(`<td name="col-${data.nick}">${data.gamePlayCnt}</td>`);
+                            $("#winrate").append(`<td name="col-${data.nick}">${data.gameWinrate}</td>`);
+                            $("#playTime").append(`<td name="col-${data.nick}">${(data.playTime).slice(0, -5)}</td>`);
+
+                            $("#roundWins").append(`<td name="col-${data.nick}">${data.roundWinCnt}</td>`);
+                            $("#roundLosses").append(`<td name="col-${data.nick}">${data.roundPlayCnt - data.roundWinCnt}</td>`);
+                            $("#roundsPlayed").append(`<td name="col-${data.nick}">${data.roundPlayCnt}</td>`);
+                            $("#roundWinrate").append(`<td name="col-${data.nick}">${data.roundWinrate}</td>`);
+                            $("#roundsPerGame").append(`<td name="col-${data.nick}">${((data.roundPlayCnt)/(data.gamePlayCnt==0?1:data.gamePlayCnt)).toFixed(2)}</td>`);
+                            $("#earnsPerRound").append(`<td name="col-${data.nick}">${((data.tokens-1000)/(data.roundPlayCnt==0?1:data.roundPlayCnt)).toFixed(2)}</td>`);
+
+                        }
+                    })
+                    .fail((request, status, error) => {
+                        alert(request.responseText);
+                    })
+                });
+               
+                $(document).on('click', '#removeBtn', function(){
+                    const nick = $(this).val();
+                    $(`td[name="col-${nick}"]`).remove();
+                    $(`th[name="col-${nick}"]`).remove();
+                })
+            });
+        </script>
+
+    </body>
+</html>
